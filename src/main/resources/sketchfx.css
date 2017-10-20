@@ -1,4 +1,19 @@
-.shape-circle {
+.shape-element {
     -fx-fill: lightgrey;
     -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.shape-selection-rect{
+    -fx-fill: transparent;
+    -fx-stroke: black;
+    -fx-stroke-width: .5;
+    -fx-opacity: .3;
+}
+
+.shape-selection-handle {
+    -fx-fill: white;
+    -fx-stroke: darkgrey;
+    -fx-stroke-width: .7;
+    -fx-effect: dropshadow(three-pass-box, grey, 2, 0, 0, 0);
 }

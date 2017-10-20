@@ -11,9 +11,7 @@ class CircleElementSkin extends SkinBase<CircleElement> {
 
     CircleElementSkin(CircleElement control) {
         super(control);
-
-        //ellipse.setStyle("-fx-fill: lightgrey; -fx-stroke: black;");
-        ellipse.getStyleClass().add("shape-circle");
+        ellipse.getStyleClass().add("shape-element");
         getChildren().add(ellipse);
 
     }

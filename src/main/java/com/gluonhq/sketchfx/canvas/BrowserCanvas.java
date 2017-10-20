@@ -26,23 +26,13 @@ public class BrowserCanvas extends StackPane {
         shapeLayer.setOnMouseClicked( e -> {
 
             if ( e.isControlDown()) {//MouseMode.INSERT == getMouseMode() ) {
-//                ShapeCircle element = new ShapeCircle();
-//                element.setCenterX(e.getX());
-//                element.setCenterY(e.getY());
-//                element.setRadius(100);
-//                element.setOnMouseClicked( x ->
-//                    controlLayer.getChildren().setAll(new ElementSelectionControl(element))
-//                );
-//                add(element);
-//            } else if ( e.isAltDown() ) {
-
                 CircleElement element = new CircleElement();
                 element.setLayoutX(e.getX());
                 element.setLayoutY(e.getY());
                 element.setPrefWidth(100);
                 element.setPrefHeight(100);
                 element.setOnMouseClicked( x ->
-                    controlLayer.getChildren().setAll(new ElementSelectionControl(element))
+                    controlLayer.getChildren().setAll(new ElementSelectionDecorator(element))
                 );
 
                 add(element);
