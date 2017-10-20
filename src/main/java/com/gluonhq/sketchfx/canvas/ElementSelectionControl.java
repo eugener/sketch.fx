@@ -1,22 +1,22 @@
-package com.gluonhq.sketchfx.shape;
+package com.gluonhq.sketchfx.canvas;
 
-import javafx.application.Platform;
+import com.gluonhq.sketchfx.element.VisualElement;
 import javafx.geometry.*;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 
-public class ShapeSelectionControl extends Group {
+public class ElementSelectionControl extends Group {
 
-    private final Node node;
+    private final VisualElement element;
 
-    public ShapeSelectionControl( Node node ) {
-        this.node = node;
+    public ElementSelectionControl(VisualElement element ) {
+        this.element = element;
         Rectangle rect = new Rectangle();
         rect.setStyle("-fx-fill: transparent; -fx-stroke: black; -fx-stroke-width: .5; -fx-opacity: .3");
 
-        Bounds bounds = node.getBoundsInParent();
+        Bounds bounds = element.getBoundsInParent();
         setLayoutX(bounds.getMinX());
         setLayoutY(bounds.getMinY());
         rect.setWidth(bounds.getWidth());

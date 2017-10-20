@@ -1,5 +1,6 @@
 package com.gluonhq.sketchfx;
 
+import com.gluonhq.sketchfx.canvas.BrowserCanvas;
 import javafx.scene.layout.BorderPane;
 
 public class Browser extends BorderPane{
