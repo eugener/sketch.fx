@@ -7,11 +7,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //TODO convert to control
 class ElementSelectionDecorator extends Group {
+
+    private static final Logger logger = LoggerFactory.getLogger(ElementSelectionDecorator.class);
 
     private final VisualElement element;
     private Rectangle rect = new Rectangle();
@@ -35,6 +37,8 @@ class ElementSelectionDecorator extends Group {
 
     private void bindToElement() {
 
+        logger.debug("Bind to " + element);
+
         rect.layoutXProperty().bindBidirectional(element.layoutXProperty());
         rect.layoutYProperty().bindBidirectional(element.layoutYProperty());
         rect.widthProperty().bindBidirectional(element.prefWidthProperty());
@@ -43,6 +47,8 @@ class ElementSelectionDecorator extends Group {
     }
 
     private void unbind() {
+
+        logger.debug("Unbind from " + element);
 
         rect.layoutXProperty().unbind();
         rect.layoutYProperty().unbind();

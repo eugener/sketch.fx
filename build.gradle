@@ -9,8 +9,7 @@ repositories {
 mainClassName = 'com.gluonhq.sketchfx.SketchFXApp'
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.21'
-//    compile 'com.esotericsoftware:kryo:4.0.0'
+    compile 'org.slf4j:slf4j-log4j12:1.7.25'
 
     testCompile 'junit:junit:4.12'
 }
