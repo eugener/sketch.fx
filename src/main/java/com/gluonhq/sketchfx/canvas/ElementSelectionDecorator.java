@@ -16,11 +16,11 @@ class ElementSelectionDecorator extends Group {
 
     private static final Logger logger = LoggerFactory.getLogger(ElementSelectionDecorator.class);
 
-    private final VisualElement element;
+    private final VisualElement owner;
     private Rectangle rect = new Rectangle();
 
-    ElementSelectionDecorator(VisualElement element) {
-        this.element = element;
+    ElementSelectionDecorator(VisualElement owner) {
+        this.owner = owner;
 
         rect.getStyleClass().add("shape-selection-rect");
 
@@ -36,20 +36,24 @@ class ElementSelectionDecorator extends Group {
 
     }
 
+    public VisualElement getOwner() {
+        return owner;
+    }
+
     private void bindToElement() {
 
-        logger.debug("Bind to " + element);
+        logger.debug("Bind to " + owner);
 
-        rect.layoutXProperty().bindBidirectional(element.layoutXProperty());
-        rect.layoutYProperty().bindBidirectional(element.layoutYProperty());
-        rect.widthProperty().bindBidirectional(element.prefWidthProperty());
-        rect.heightProperty().bindBidirectional(element.prefHeightProperty());
+        rect.layoutXProperty().bindBidirectional(owner.layoutXProperty());
+        rect.layoutYProperty().bindBidirectional(owner.layoutYProperty());
+        rect.widthProperty().bindBidirectional(owner.prefWidthProperty());
+        rect.heightProperty().bindBidirectional(owner.prefHeightProperty());
 
     }
 
     private void unbind() {
 
-        logger.debug("Unbind from " + element);
+        logger.debug("Unbind from " + owner);
 
         rect.layoutXProperty().unbind();
         rect.layoutYProperty().unbind();

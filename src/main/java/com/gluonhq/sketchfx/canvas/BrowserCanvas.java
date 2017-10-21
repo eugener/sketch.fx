@@ -4,17 +4,26 @@ import com.gluonhq.sketchfx.element.VisualElement;
 import com.gluonhq.sketchfx.element.CircleElement;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.*;
 import javafx.scene.Node;
-import javafx.scene.control.SelectionModel;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+import java.util.function.Consumer;
+
 public class BrowserCanvas extends StackPane {
 
-    private Pane shapeLayer   = new Pane();
+    private Pane elementLayer = new Pane();
     private Pane controlLayer = new Pane();
 
+    private SelectionModel<VisualElement> selectionModel = new SelectionModel<>(
+
+           element -> controlLayer.getChildren().removeIf( node ->
+                   node instanceof  ElementSelectionDecorator &&
+                           ((ElementSelectionDecorator)node).getOwner() == element ),
+
+           element -> controlLayer.getChildren().setAll(new ElementSelectionDecorator(element)
+    ));
 
     enum MouseMode {
         SELECT,
@@ -26,19 +35,17 @@ public class BrowserCanvas extends StackPane {
         getStylesheets().add(BrowserCanvas.class.getResource("/sketchfx.css").toExternalForm());
         getStyleClass().add("browser-canvas");
 
-        getChildren().addAll(shapeLayer, controlLayer);
+        getChildren().addAll(elementLayer, controlLayer);
         controlLayer.setMouseTransparent(true);
 
-
-        shapeLayer.setOnMouseClicked( e -> {
+        elementLayer.setOnMouseClicked(e -> {
 
             if ( e.isControlDown()) {//MouseMode.INSERT == getMouseMode() ) {
                 CircleElement element = new CircleElement(e.getX(), e.getY(), 100, 100);
-                element.setOnMouseClicked( x ->
-                    controlLayer.getChildren().setAll(new ElementSelectionDecorator(element))
-                );
-
+                element.setOnMouseClicked( ex -> selectionModel.add(element, !ex.isShiftDown()));
                 add(element);
+            } else {
+                selectionModel.clear();
             }
 
         });
@@ -46,7 +53,7 @@ public class BrowserCanvas extends StackPane {
     }
 
     public void add( VisualElement element ) {
-        shapeLayer.getChildren().add((Node)element);
+        elementLayer.getChildren().add((Node)element);
     }
 
     // mouseModeProperty
@@ -68,3 +75,4 @@ public class BrowserCanvas extends StackPane {
 
 
 }
+
