@@ -1,4 +1,4 @@
-package com.gluonhq.sketchfx.element;
+package org.sketchfx.element;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Control;

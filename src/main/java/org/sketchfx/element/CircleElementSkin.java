@@ -1,7 +1,6 @@
-package com.gluonhq.sketchfx.element;
+package org.sketchfx.element;
 
 import javafx.scene.control.SkinBase;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 
 class CircleElementSkin extends SkinBase<CircleElement> {

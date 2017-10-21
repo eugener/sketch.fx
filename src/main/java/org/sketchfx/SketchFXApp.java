@@ -1,6 +1,5 @@
-package com.gluonhq.sketchfx;
+package org.sketchfx;
 
-import com.gluonhq.sketchfx.element.Configuration;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

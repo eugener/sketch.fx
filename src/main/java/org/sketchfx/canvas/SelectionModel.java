@@ -1,4 +1,4 @@
-package com.gluonhq.sketchfx.canvas;
+package org.sketchfx.canvas;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;

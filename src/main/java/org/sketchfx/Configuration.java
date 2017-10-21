@@ -1,4 +1,4 @@
-package com.gluonhq.sketchfx.element;
+package org.sketchfx;
 
 import java.io.IOException;
 import java.nio.file.Files;

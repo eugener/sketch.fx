@@ -1,15 +1,12 @@
-package com.gluonhq.sketchfx.canvas;
+package org.sketchfx.canvas;
 
-import com.gluonhq.sketchfx.element.VisualElement;
-import com.gluonhq.sketchfx.element.CircleElement;
+import org.sketchfx.element.VisualElement;
+import org.sketchfx.element.CircleElement;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.*;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-
-import java.util.function.Consumer;
 
 public class BrowserCanvas extends StackPane {
 

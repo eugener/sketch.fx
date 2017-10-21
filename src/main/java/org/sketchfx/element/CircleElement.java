@@ -1,4 +1,4 @@
-package com.gluonhq.sketchfx.element;
+package org.sketchfx.element;
 
 import javafx.scene.control.Skin;
 

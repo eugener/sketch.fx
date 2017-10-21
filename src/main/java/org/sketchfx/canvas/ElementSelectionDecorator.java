@@ -1,6 +1,6 @@
-package com.gluonhq.sketchfx.canvas;
+package org.sketchfx.canvas;
 
-import com.gluonhq.sketchfx.element.VisualElement;
+import org.sketchfx.element.VisualElement;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.*;
 import javafx.scene.Cursor;

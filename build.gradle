@@ -6,7 +6,7 @@ repositories {
     jcenter()
 }
 
-mainClassName = 'com.gluonhq.sketchfx.SketchFXApp'
+mainClassName = 'org.sketchfx.SketchFXApp'
 
 dependencies {
     compile 'org.slf4j:slf4j-log4j12:1.7.25'
