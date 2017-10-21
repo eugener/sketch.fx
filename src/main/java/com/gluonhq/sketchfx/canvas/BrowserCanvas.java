@@ -5,6 +5,8 @@ import com.gluonhq.sketchfx.element.CircleElement;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionModel;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -13,31 +15,31 @@ public class BrowserCanvas extends StackPane {
     private Pane shapeLayer   = new Pane();
     private Pane controlLayer = new Pane();
 
+
     enum MouseMode {
         SELECT,
         INSERT
     }
 
     public BrowserCanvas() {
+
+        getStylesheets().add(BrowserCanvas.class.getResource("/sketchfx.css").toExternalForm());
+        getStyleClass().add("browser-canvas");
+
         getChildren().addAll(shapeLayer, controlLayer);
         controlLayer.setMouseTransparent(true);
-        setStyle("-fx-background-color: white");
+
 
         shapeLayer.setOnMouseClicked( e -> {
 
             if ( e.isControlDown()) {//MouseMode.INSERT == getMouseMode() ) {
-                CircleElement element = new CircleElement();
-                element.setLayoutX(e.getX());
-                element.setLayoutY(e.getY());
-                element.setPrefWidth(100);
-                element.setPrefHeight(100);
+                CircleElement element = new CircleElement(e.getX(), e.getY(), 100, 100);
                 element.setOnMouseClicked( x ->
                     controlLayer.getChildren().setAll(new ElementSelectionDecorator(element))
                 );
 
                 add(element);
             }
-
 
         });
 

@@ -1,3 +1,7 @@
+.browser-canvas {
+   -fx-background-color: white;
+}
+
 .shape-element {
     -fx-fill: lightgrey;
     -fx-stroke: black;

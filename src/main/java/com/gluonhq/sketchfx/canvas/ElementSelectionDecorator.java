@@ -1,6 +1,7 @@
 package com.gluonhq.sketchfx.canvas;
 
 import com.gluonhq.sketchfx.element.VisualElement;
+import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.*;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -90,20 +91,29 @@ class Handle extends Rectangle {
     }
 
     private void configurePosition( Rectangle rect ) {
+        layoutXProperty().bind( getBinding(handleType.getHpos(), rect));
+        layoutYProperty().bind( getBinding(handleType.getVpos(), rect));
+    }
 
-        switch (handleType.getHpos()) {
-            case LEFT  : layoutXProperty().bind(rect.layoutXProperty().subtract(Handle.HALF_SIZE)); break;
-            case CENTER: layoutXProperty().bind(rect.layoutXProperty().subtract(Handle.HALF_SIZE).add(rect.getWidth()/2)); break;
-            case RIGHT : layoutXProperty().bind(rect.layoutXProperty().subtract(Handle.HALF_SIZE).add(rect.getWidth())); break;
+    private DoubleBinding getBinding( HPos pos, Rectangle rect ) {
+
+        DoubleBinding initialBinding = rect.layoutXProperty().subtract(Handle.HALF_SIZE);
+        switch (pos) {
+            case LEFT  : return initialBinding;
+            case CENTER: return initialBinding.add(rect.getWidth()/2);
+            case RIGHT : return initialBinding.add(rect.getWidth());
+            default    : return null;
         }
+    }
 
-        switch (handleType.getVpos()) {
-            case TOP   : layoutYProperty().bind(rect.layoutYProperty().subtract(Handle.HALF_SIZE)); break;
-            case CENTER: layoutYProperty().bind(rect.layoutYProperty().subtract(Handle.HALF_SIZE).add(rect.getHeight()/2)); break;
-            case BOTTOM: layoutYProperty().bind(rect.layoutYProperty().subtract(Handle.HALF_SIZE).add(rect.getHeight())); break;
+    private DoubleBinding getBinding( VPos pos, Rectangle rect ) {
+        DoubleBinding initialBinding = rect.layoutYProperty().subtract(Handle.HALF_SIZE);
+        switch (pos) {
+            case TOP   : return initialBinding;
+            case CENTER: return initialBinding.add(rect.getHeight()/2);
+            case BOTTOM: return initialBinding.add(rect.getHeight());
+            default    : return null;
         }
-
-
     }
 
     void unbind() {
