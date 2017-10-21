@@ -3,11 +3,14 @@ package com.gluonhq.sketchfx.element;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Control;
 
+import java.util.UUID;
+
 public abstract class VisualElement extends Control {
 
     public static String STYLE_CLASS = "shape-element";
 
     private Point2D dragStart;
+    private String id = UUID.randomUUID().toString();
 
     VisualElement() {
 
@@ -22,6 +25,21 @@ public abstract class VisualElement extends Control {
         setLayoutY(y);
         setPrefWidth(width);
         setPrefHeight(height);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VisualElement)) return false;
+
+        VisualElement that = (VisualElement) o;
+
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     private void setupDragging() {
