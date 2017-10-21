@@ -36,6 +36,8 @@ public class Configuration {
         }
     }
 
+    // String
+
     public String getString(String key) {
         return props.getProperty(key);
     }
@@ -47,6 +49,8 @@ public class Configuration {
     public void setString( String key, String value ) {
         props.setProperty(key, value);
     }
+
+    //Double
 
     public double getDouble(String key) {
         return Double.valueOf(props.getProperty(key));
