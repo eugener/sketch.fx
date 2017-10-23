@@ -5,6 +5,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.SkinBase;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 import org.sketchfx.util.NodeDragSupport;
 
@@ -22,6 +23,8 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
         super(control);
 
         selectionArea.getStyleClass().add("shape-selection-area");
+
+        // add ability to drag it around, which moves the owner element too
         NodeDragSupport.configure(selectionArea, (node, deltas) -> {
                 SelectionDecorator d = getSkinnable();
                 d.relocate(d.getLayoutX() + deltas.getX(), d.getLayoutY() + deltas.getY());
@@ -41,9 +44,7 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
         selectionArea.setWidth( contentWidth );
         selectionArea.setHeight( contentHeight );
 
-        for( Handle handle: handles ) {
-            handle.configurePosition();
-        }
+        handles.forEach(Handle::configurePosition);
 
     }
 
@@ -69,7 +70,7 @@ class Handle extends Rectangle {
         configurePosition();
         setCursor(handleType.getCursor());
         NodeDragSupport.configure( this, (node, deltas) ->
-            this.getHandleType().resizeRelocate( decorator, deltas)
+            node.getHandleType().resizeRelocate( decorator, deltas)
         );
 
     }
@@ -82,8 +83,6 @@ class Handle extends Rectangle {
         setLayoutX( handleType.getLayoutX( selectionArea ) );
         setLayoutY( handleType.getLayoutY( selectionArea ) );
     }
-
-
 
 }
 
@@ -126,7 +125,7 @@ enum HandleType {
                 .collect(Collectors.toList());
     }
 
-    public void resizeRelocate(SelectionDecorator node, Point2D deltas ) {
+    public void resizeRelocate(Region node, Point2D deltas ) {
 
         if (hpos == HPos.LEFT) {
             node.setLayoutX(node.getLayoutX() + deltas.getX());
