@@ -6,7 +6,6 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.SkinBase;
 import javafx.scene.shape.Rectangle;
-import org.sketchfx.element.VisualElement;
 import org.sketchfx.util.NodeDragSupport;
 
 import java.util.Arrays;
@@ -39,7 +38,6 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
 
         for( Handle handle: handles ) {
             handle.configurePosition();
-
         }
 
     }
@@ -48,8 +46,8 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
 
 class Handle extends Rectangle {
 
-    private static double SIZE = 7;
-    private static double HALF_SIZE = SIZE / 2;
+    static double SIZE = 7;
+    static double HALF_SIZE = SIZE / 2;
 
     private HandleType handleType;
     private Rectangle selectionArea;
@@ -66,7 +64,7 @@ class Handle extends Rectangle {
         configurePosition();
         setCursor(handleType.getCursor());
         NodeDragSupport.configure( this, (node, deltas) ->
-            this.getHandleType().resizeRelocate( decorator.getOwner(), deltas)
+            this.getHandleType().resizeRelocate( decorator, deltas)
         );
 
     }
@@ -76,30 +74,11 @@ class Handle extends Rectangle {
     }
 
     void configurePosition() {
-        setLayoutX( computeX() );
-        setLayoutY( computeY() );
+        setLayoutX( handleType.getLayoutX( selectionArea ) );
+        setLayoutY( handleType.getLayoutY( selectionArea ) );
     }
 
-    private double computeX() {
 
-        double x = selectionArea.getLayoutX() - Handle.HALF_SIZE ;
-        switch ( handleType.getHpos()) {
-            case LEFT  : return x;
-            case CENTER: return x + selectionArea.getWidth()/2;
-            case RIGHT : return x + selectionArea.getWidth();
-            default    : return x;
-        }
-    }
-
-    private double computeY() {
-        double y = selectionArea.getLayoutY() - Handle.HALF_SIZE ;
-        switch (handleType.getVpos()) {
-            case TOP   : return y;
-            case CENTER: return y + selectionArea.getHeight()/2;
-            case BOTTOM: return y + selectionArea.getHeight();
-            default    : return y;
-        }
-    }
 
 }
 
@@ -142,26 +121,47 @@ enum HandleType {
                 .collect(Collectors.toList());
     }
 
-    public void resizeRelocate(VisualElement node, Point2D deltas ) {
+    public void resizeRelocate(SelectionDecorator node, Point2D deltas ) {
 
-        if (this.getHpos() == HPos.LEFT) {
+        if (hpos == HPos.LEFT) {
             node.setLayoutX(node.getLayoutX() + deltas.getX());
             node.setPrefWidth(node.getPrefWidth() - deltas.getX());
         }
 
-        if (this.getHpos() == HPos.RIGHT) {
+        if (hpos == HPos.RIGHT) {
             node.setPrefWidth(node.getPrefWidth() + deltas.getX());
         }
 
-        if (this.getVpos() == VPos.TOP) {
+        if (vpos == VPos.TOP) {
             node.setLayoutY(node.getLayoutY() + deltas.getY());
             node.setPrefHeight(node.getPrefHeight() - deltas.getY());
         }
 
-        if (this.getVpos() == VPos.BOTTOM) {
+        if (vpos == VPos.BOTTOM) {
             node.setPrefHeight(node.getPrefHeight() + deltas.getY());
         }
 
+    }
+
+    double getLayoutX(Rectangle selectionArea ) {
+
+        double x = selectionArea.getLayoutX() - Handle.HALF_SIZE ;
+        switch ( hpos ) {
+            case LEFT  : return x;
+            case CENTER: return x + selectionArea.getWidth()/2;
+            case RIGHT : return x + selectionArea.getWidth();
+            default    : return x;
+        }
+    }
+
+    double getLayoutY(Rectangle selectionArea ) {
+        double y = selectionArea.getLayoutY() - Handle.HALF_SIZE ;
+        switch (vpos) {
+            case TOP   : return y;
+            case CENTER: return y + selectionArea.getHeight()/2;
+            case BOTTOM: return y + selectionArea.getHeight();
+            default    : return y;
+        }
     }
 
 }
