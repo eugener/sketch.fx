@@ -22,6 +22,11 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
         super(control);
 
         selectionArea.getStyleClass().add("shape-selection-area");
+        NodeDragSupport.configure(selectionArea, (node, deltas) -> {
+                SelectionDecorator d = getSkinnable();
+                d.relocate(d.getLayoutX() + deltas.getX(), d.getLayoutY() + deltas.getY());
+            }
+        );
 
         getChildren().add(selectionArea);
         getChildren().addAll(handles);
