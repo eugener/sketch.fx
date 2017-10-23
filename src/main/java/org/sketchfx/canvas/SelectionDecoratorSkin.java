@@ -1,13 +1,10 @@
 package org.sketchfx.canvas;
 
-import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.SkinBase;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import org.sketchfx.element.VisualElement;
 import org.sketchfx.util.NodeDragSupport;
@@ -45,10 +42,7 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
 
         }
 
-
     }
-
-
 
 }
 
@@ -112,12 +106,12 @@ class Handle extends Rectangle {
 enum HandleType {
 
     LEFT_TOP     (HPos.LEFT,  VPos.TOP,    Cursor.NW_RESIZE),
-    MIDDLE_TOP   (HPos.CENTER,VPos.TOP,    Cursor.V_RESIZE),
+    CENTER_TOP   (HPos.CENTER,VPos.TOP,    Cursor.V_RESIZE),
     RIGHT_TOP    (HPos.RIGHT, VPos.TOP,    Cursor.NE_RESIZE),
-    LEFT_MIDDLE  (HPos.LEFT,  VPos.CENTER, Cursor.H_RESIZE),
-    RIGHT_MIDDLE (HPos.RIGHT, VPos.CENTER, Cursor.H_RESIZE),
+    LEFT_CENTER  (HPos.LEFT,  VPos.CENTER, Cursor.H_RESIZE),
+    RIGHT_CENTER (HPos.RIGHT, VPos.CENTER, Cursor.H_RESIZE),
     LEFT_BOTTOM  (HPos.LEFT,  VPos.BOTTOM, Cursor.SW_RESIZE),
-    MIDDLE_BOTTOM(HPos.CENTER,VPos.BOTTOM, Cursor.V_RESIZE),
+    CENTER_BOTTOM(HPos.CENTER,VPos.BOTTOM, Cursor.V_RESIZE),
     RIGHT_BOTTOM (HPos.RIGHT, VPos.BOTTOM, Cursor.SE_RESIZE);
 
     private final HPos hpos;
@@ -150,23 +144,23 @@ enum HandleType {
 
     public void resizeRelocate(VisualElement node, Point2D deltas ) {
 
-        switch (this) {
-
-            case LEFT_TOP  :
-                node.setLayoutX(node.getLayoutX() + deltas.getX());
-                node.setLayoutY(node.getLayoutY() + deltas.getY());
-                node.setPrefWidth(node.getPrefWidth() - deltas.getX());
-                node.setPrefHeight(node.getPrefHeight() - deltas.getY());
-                break;
-            case MIDDLE_TOP:
-                node.setLayoutY(node.getLayoutY() + deltas.getY());
-                node.setPrefHeight(node.getPrefHeight() - deltas.getY());
-                break;
-
-//            case RIGHT_TOP : selectionArea.resize(selectionArea.getWidth() + deltas.getX(),selectionArea.getHeight() + deltas.getY());
-
+        if (this.getHpos() == HPos.LEFT) {
+            node.setLayoutX(node.getLayoutX() + deltas.getX());
+            node.setPrefWidth(node.getPrefWidth() - deltas.getX());
         }
 
+        if (this.getHpos() == HPos.RIGHT) {
+            node.setPrefWidth(node.getPrefWidth() + deltas.getX());
+        }
+
+        if (this.getVpos() == VPos.TOP) {
+            node.setLayoutY(node.getLayoutY() + deltas.getY());
+            node.setPrefHeight(node.getPrefHeight() - deltas.getY());
+        }
+
+        if (this.getVpos() == VPos.BOTTOM) {
+            node.setPrefHeight(node.getPrefHeight() + deltas.getY());
+        }
 
     }
 
