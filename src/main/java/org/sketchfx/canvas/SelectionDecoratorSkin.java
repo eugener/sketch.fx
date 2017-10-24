@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
 
-    private final Rectangle selectionArea = new Rectangle();
-    private final List<Handle> handles = HandleType.handles(selectionArea, getSkinnable());
+    final Rectangle selectionArea = new Rectangle();
+    private final List<Handle> handles = getHandles();
 
     SelectionDecoratorSkin(SelectionDecorator control) {
 
@@ -48,20 +48,28 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
 
     }
 
+    private List<Handle> getHandles() {
+        return Arrays
+                .stream(HandleType.values())
+                .map(ht -> new Handle(ht, this) )
+                .collect(Collectors.toList());
+    }
+
+
 }
 
 class Handle extends Rectangle {
 
-    static double SIZE = 7;
-    static double HALF_SIZE = SIZE / 2;
+    private static double SIZE = 7;
+    private static double HALF_SIZE = SIZE / 2;
 
     private HandleType handleType;
     private Rectangle selectionArea;
 
-    Handle( Rectangle selectionArea, HandleType handleType, SelectionDecorator decorator ) {
+    Handle( HandleType handleType, SelectionDecoratorSkin skin ) {
 
-        this.selectionArea = selectionArea;
         this.handleType = handleType;
+        this.selectionArea = skin.selectionArea;
 
         getStyleClass().add("shape-selection-handle");
         setWidth(SIZE);
@@ -70,19 +78,38 @@ class Handle extends Rectangle {
         configurePosition();
         setCursor(handleType.getCursor());
         NodeDragSupport.configure( this, (node, deltas) ->
-            node.getHandleType().resizeRelocate( decorator, deltas)
+            node.handleType.resizeRelocate( skin.getSkinnable(), deltas)
         );
 
     }
 
-    public HandleType getHandleType() {
-        return handleType;
+    void configurePosition() {
+        setLayoutX( getRelativeX() );
+        setLayoutY( getRelativeY() );
     }
 
-    void configurePosition() {
-        setLayoutX( handleType.getLayoutX( selectionArea ) );
-        setLayoutY( handleType.getLayoutY( selectionArea ) );
+    private double getRelativeX() {
+
+        double x = selectionArea.getLayoutX() - Handle.HALF_SIZE ;
+        switch ( handleType.getHpos() ) {
+            case LEFT  : return x;
+            case CENTER: return x + selectionArea.getWidth()/2;
+            case RIGHT : return x + selectionArea.getWidth();
+            default    : return x;
+        }
     }
+
+    private double getRelativeY() {
+        double y = selectionArea.getLayoutY() - Handle.HALF_SIZE ;
+        switch (handleType.getVpos()) {
+            case TOP   : return y;
+            case CENTER: return y + selectionArea.getHeight()/2;
+            case BOTTOM: return y + selectionArea.getHeight();
+            default    : return y;
+        }
+    }
+
+
 
 }
 
@@ -119,12 +146,6 @@ enum HandleType {
         return cursor;
     }
 
-    public static List<Handle> handles(Rectangle selectionArea, SelectionDecorator decorator ) {
-        return Arrays.stream(HandleType.values())
-                .map(ht -> new Handle(selectionArea, ht, decorator) )
-                .collect(Collectors.toList());
-    }
-
     public void resizeRelocate(Region node, Point2D deltas ) {
 
         if (hpos == HPos.LEFT) {
@@ -145,27 +166,6 @@ enum HandleType {
             node.setPrefHeight(node.getPrefHeight() + deltas.getY());
         }
 
-    }
-
-    double getLayoutX(Rectangle selectionArea ) {
-
-        double x = selectionArea.getLayoutX() - Handle.HALF_SIZE ;
-        switch ( hpos ) {
-            case LEFT  : return x;
-            case CENTER: return x + selectionArea.getWidth()/2;
-            case RIGHT : return x + selectionArea.getWidth();
-            default    : return x;
-        }
-    }
-
-    double getLayoutY(Rectangle selectionArea ) {
-        double y = selectionArea.getLayoutY() - Handle.HALF_SIZE ;
-        switch (vpos) {
-            case TOP   : return y;
-            case CENTER: return y + selectionArea.getHeight()/2;
-            case BOTTOM: return y + selectionArea.getHeight();
-            default    : return y;
-        }
     }
 
 }
