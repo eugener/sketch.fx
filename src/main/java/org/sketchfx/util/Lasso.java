@@ -1,34 +1,43 @@
 package org.sketchfx.util;
 
-import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class Lasso extends AbstractDragSupport {
 
     private Rectangle rect;
     private Pane lassoPane;
-    private Consumer<Rectangle> lassoDone;
 
-    public Lasso(Pane clickPane, Pane lassoPane, Consumer<Rectangle> lassoDone ) {
-
+    public Lasso(Pane clickPane, Pane lassoPane ) {
         super(clickPane);
         this.lassoPane = Objects.requireNonNull(lassoPane);
-        this.lassoDone = Objects.requireNonNull(lassoDone);
+    }
 
+    // onFinishedProperty
+    private final ObjectProperty<Consumer<Rectangle>> onFinishedProperty = new SimpleObjectProperty<>(this, "finished");
+    public final ObjectProperty<Consumer<Rectangle>> onFinishedProperty() {
+        return onFinishedProperty;
+    }
+    public final Consumer<Rectangle> getOnFinished() {
+        return onFinishedProperty.get();
+    }
+    public final void setOnFinished(Consumer<Rectangle> value) {
+        onFinishedProperty.set(value);
     }
 
     @Override
     protected void dragBegin(Point2D dragStart) {
-        rect = new Rectangle( dragStart.getX(), dragStart.getY(), 0, 0);
+        Point2D start = lassoPane.sceneToLocal(dragStart);
+        rect = new Rectangle( start.getX(), start.getY(), 0, 0);
         rect.setStyle("-fx-fill: transparent; -fx-stroke: deepskyblue;");
         lassoPane.getChildren().add(rect);
     }
@@ -43,7 +52,7 @@ public class Lasso extends AbstractDragSupport {
     @Override
     protected void dragEnd() {
         lassoPane.getChildren().remove(rect);
-        lassoDone.accept(rect);
+        if ( getOnFinished() != null ) getOnFinished().accept(rect);
         rect = null;
     }
 

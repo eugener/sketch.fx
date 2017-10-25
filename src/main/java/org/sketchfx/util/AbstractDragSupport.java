@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public abstract class AbstractDragSupport<T extends Node> {
 
-    private Point2D dragStart;
+    private Point2D sceneDragStart;
     private final T node;
 
     private EventHandler<MouseEvent> mousePressed;
@@ -24,25 +24,25 @@ public abstract class AbstractDragSupport<T extends Node> {
         this.node = Objects.requireNonNull(node);
 
         mousePressed = e -> {
-            dragStart = new Point2D( e.getX(), e.getY());
-            dragBegin(dragStart);
+            sceneDragStart = new Point2D( e.getSceneX(), e.getSceneY());
+            dragBegin(sceneDragStart);
         };
 
         mouseDragged = e -> {
-            Point2D currentLocation = new Point2D( e.getX(), e.getY());
-            drag( node, currentLocation.subtract(dragStart));
-            dragStart = currentLocation;
+            Point2D currentLocation = new Point2D( e.getSceneX(), e.getSceneY());
+            drag( node, currentLocation.subtract(sceneDragStart));
+            sceneDragStart = currentLocation;
         };
 
         mouseReleased = e -> {
-            dragStart = null;
+            sceneDragStart = null;
             dragEnd();
         };
 
     }
 
-    protected Point2D getDragStart() {
-        return dragStart;
+    protected Point2D getSceneDragStart() {
+        return sceneDragStart;
     }
 
     protected void dragBegin(Point2D dragStart) {}

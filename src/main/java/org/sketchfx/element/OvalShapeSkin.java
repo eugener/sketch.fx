@@ -3,12 +3,12 @@ package org.sketchfx.element;
 import javafx.scene.control.SkinBase;
 import javafx.scene.shape.Ellipse;
 
-class OvalElementSkin extends SkinBase<OvalElement> {
+class OvalShapeSkin extends SkinBase<OvalShape> {
 
 
     private Ellipse ellipse = new Ellipse();
 
-    OvalElementSkin(OvalElement control) {
+    OvalShapeSkin(OvalShape control) {
         super(control);
         ellipse.getStyleClass().add(VisualElement.STYLE_CLASS);
         getChildren().add(ellipse);

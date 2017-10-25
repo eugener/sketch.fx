@@ -24,8 +24,6 @@ public abstract class VisualElement extends Control {
         setLayoutY(area.getY());
         setPrefWidth(area.getWidth());
         setPrefHeight(area.getHeight());
-
-
     }
 
     @Override

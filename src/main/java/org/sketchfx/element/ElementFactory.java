@@ -8,11 +8,11 @@ public final class ElementFactory {
     }
 
     public static VisualElement getOval(Rectangle rect) {
-        return new OvalElement(rect);
+        return new OvalShape(rect);
     }
 
     public static VisualElement getRectangle(Rectangle rect) {
-        return new RectangleElement(rect);
+        return new RectangleShape(rect);
     }
 
 }

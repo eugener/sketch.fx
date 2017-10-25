@@ -1,7 +1,5 @@
 package org.sketchfx.canvas;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -20,11 +18,6 @@ public class BrowserCanvas extends StackPane {
 
     private SelectionModel<VisualElement> selectionModel = new SelectionModel<>( this::elementRemoved, this::elementAdded );
 
-    public enum Mode {
-        SELECT,
-        INSERT
-    }
-
     public BrowserCanvas() {
 
         getStylesheets().add(BrowserCanvas.class.getResource("/sketchfx.css").toExternalForm());
@@ -35,8 +28,8 @@ public class BrowserCanvas extends StackPane {
         // setting mouse transparent does not work as all children will not respond to events
         controlLayer.setPickOnBounds(false);
 
-        elementLayer.addEventFilter(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-              selectionModel.clear();
+        elementLayer.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+           selectionModel.clear();
         });
 
     }
@@ -46,19 +39,20 @@ public class BrowserCanvas extends StackPane {
     }
 
 
-    public void initAdd(Function<Rectangle, ? extends VisualElement> element  ) {
-        new SingleUseLasso(
-                elementLayer,
-                controlLayer,
-                rect -> {
-                    VisualElement e = element.apply(rect);
-                    e.addEventFilter(MouseEvent.MOUSE_PRESSED, ex -> {
-                        selectionModel.add(e, !ex.isShiftDown());
-                    });
-                    add(e);
-                }
-        ).start();
+    private SingleUseLasso creationLasso = new SingleUseLasso( elementLayer, controlLayer );
+
+    public void initAdd( Function<Rectangle, ? extends VisualElement> element ) {
+
+          creationLasso.setOnFinished(rect -> {
+                VisualElement e = element.apply(rect);
+                e.addEventFilter(MouseEvent.MOUSE_PRESSED, ex -> selectionModel.add(e, !ex.isShiftDown()));
+                add(e);
+          });
+          creationLasso.start();
+
     }
+
+
 
     private void elementRemoved( VisualElement e ) {
         findSelectionDecorator(e).ifPresent( decorator -> {
@@ -81,23 +75,6 @@ public class BrowserCanvas extends StackPane {
         }
         return Optional.empty();
     }
-
-    // interactionModeProperty
-    private final ObjectProperty<Mode> modeProperty =
-            new SimpleObjectProperty<>(this, "interactionMode", Mode.SELECT);
-
-    public final ObjectProperty<Mode> modeProperty() {
-       return modeProperty;
-    }
-    public final Mode getMode() {
-       return modeProperty.get();
-    }
-    public final void setMode(Mode value) {
-        modeProperty.set(value);
-    }
-
-
-
 
 
 }
