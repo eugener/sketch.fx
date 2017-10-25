@@ -1,6 +1,7 @@
 package org.sketchfx.element;
 
 import javafx.scene.control.Control;
+import javafx.scene.shape.Rectangle;
 import org.sketchfx.util.NodeDragSupport;
 
 import java.util.UUID;
@@ -17,12 +18,12 @@ public abstract class VisualElement extends Control {
         );
     }
 
-    VisualElement( double x, double y, double width, double height ) {
+    VisualElement(Rectangle area) {
         this();
-        setLayoutX(x);
-        setLayoutY(y);
-        setPrefWidth(width);
-        setPrefHeight(height);
+        setLayoutX(area.getX());
+        setLayoutY(area.getY());
+        setPrefWidth(area.getWidth());
+        setPrefHeight(area.getHeight());
 
 
     }

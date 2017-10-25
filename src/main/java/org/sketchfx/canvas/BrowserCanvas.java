@@ -1,15 +1,17 @@
 package org.sketchfx.canvas;
 
-import javafx.scene.input.MouseEvent;
-import org.sketchfx.element.VisualElement;
-import org.sketchfx.element.CircleElement;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Rectangle;
+import org.sketchfx.element.VisualElement;
+import org.sketchfx.util.SingleUseLasso;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 public class BrowserCanvas extends StackPane {
 
@@ -18,7 +20,7 @@ public class BrowserCanvas extends StackPane {
 
     private SelectionModel<VisualElement> selectionModel = new SelectionModel<>( this::elementRemoved, this::elementAdded );
 
-    enum MouseMode {
+    public enum Mode {
         SELECT,
         INSERT
     }
@@ -34,23 +36,28 @@ public class BrowserCanvas extends StackPane {
         controlLayer.setPickOnBounds(false);
 
         elementLayer.addEventFilter(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-
-            if ( e.isControlDown()) {//MouseMode.INSERT == getMouseMode() ) {
-                CircleElement element = new CircleElement(e.getX(), e.getY(), 100, 100);
-                element.addEventFilter(MouseEvent.MOUSE_PRESSED, (MouseEvent ex) -> {
-                    selectionModel.add(element, !ex.isShiftDown());
-                });
-                add(element);
-            } else {
-                selectionModel.clear();
-            }
-
+              selectionModel.clear();
         });
 
     }
 
     public void add( VisualElement element ) {
         elementLayer.getChildren().add((Node)element);
+    }
+
+
+    public void initAdd(Function<Rectangle, ? extends VisualElement> element  ) {
+        new SingleUseLasso(
+                elementLayer,
+                controlLayer,
+                rect -> {
+                    VisualElement e = element.apply(rect);
+                    e.addEventFilter(MouseEvent.MOUSE_PRESSED, ex -> {
+                        selectionModel.add(e, !ex.isShiftDown());
+                    });
+                    add(e);
+                }
+        ).start();
     }
 
     private void elementRemoved( VisualElement e ) {
@@ -75,18 +82,18 @@ public class BrowserCanvas extends StackPane {
         return Optional.empty();
     }
 
-    // mouseModeProperty
-    private final ObjectProperty<MouseMode> mouseModeProperty =
-            new SimpleObjectProperty<>(this, "mouseMode", MouseMode.SELECT);
+    // interactionModeProperty
+    private final ObjectProperty<Mode> modeProperty =
+            new SimpleObjectProperty<>(this, "interactionMode", Mode.SELECT);
 
-    public final ObjectProperty<MouseMode> mouseModeProperty() {
-       return mouseModeProperty;
+    public final ObjectProperty<Mode> modeProperty() {
+       return modeProperty;
     }
-    public final MouseMode getMouseMode() {
-       return mouseModeProperty.get();
+    public final Mode getMode() {
+       return modeProperty.get();
     }
-    public final void setMouseMode(MouseMode value) {
-        mouseModeProperty.set(value);
+    public final void setMode(Mode value) {
+        modeProperty.set(value);
     }
 
 
@@ -94,4 +101,6 @@ public class BrowserCanvas extends StackPane {
 
 
 }
+
+
 

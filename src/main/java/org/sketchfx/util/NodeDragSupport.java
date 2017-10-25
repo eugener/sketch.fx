@@ -1,5 +1,6 @@
 package org.sketchfx.util;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseDragEvent;
@@ -8,31 +9,23 @@ import javafx.scene.input.MouseEvent;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public class NodeDragSupport<T extends Node> {
+public class NodeDragSupport<T extends Node> extends AbstractDragSupport<T> {
 
-    private Point2D dragStart;
+    private final BiConsumer<T, Point2D> drag;
 
-    private NodeDragSupport(T node, BiConsumer<T, Point2D> drag ) {
+    private NodeDragSupport(T node, BiConsumer<T, Point2D> drag) {
 
-        Objects.requireNonNull(node);
-        Objects.requireNonNull(drag);
-
-        node.addEventFilter(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-            dragStart = new Point2D( e.getSceneX(), e.getSceneY());
-        });
-
-        node.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, (MouseEvent e) ->  {
-            Point2D currentLocation = new Point2D( e.getSceneX(), e.getSceneY());
-            drag.accept( node, currentLocation.subtract(dragStart));
-            dragStart = currentLocation;
-        });
-
-        node.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, (MouseDragEvent e) -> dragStart = null);
+        super(node);
+        this.drag = Objects.requireNonNull(drag);
 
     }
 
+    protected void drag( T node, Point2D deltas ) {
+        drag.accept( node, deltas);
+    }
+
     public static <T extends Node> void configure(T node, BiConsumer<T, Point2D> drag ) {
-        new NodeDragSupport<T>(node, drag);
+        new NodeDragSupport<T>(node, drag).start();
     }
 
 
