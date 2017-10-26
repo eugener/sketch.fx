@@ -27,6 +27,16 @@
     -fx-effect: dropshadow(three-pass-box, #999999, 2, 0, 0, 1);
 }
 
-shape-selection-handle:hover {
+.shape-selection-handle:hover {
     -fx-fill: lightblue;
+}
+
+.canvas-hint {
+    -fx-background-color: darkgray;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+    -fx-padding: 5;
+    -fx-arc-height: 15;
+    -fx-arc-width: 15;
+    -fx-effect: dropshadow(three-pass-box, #999999, 2, 0, 0, 1);
 }
