@@ -12,6 +12,7 @@ public abstract class VisualElement extends Control {
 
     private String id = UUID.randomUUID().toString();
 
+
     VisualElement() {
         NodeDragSupport.configure( this, (element, deltas) ->
             relocate(getLayoutX() + deltas.getX(), getLayoutY() + deltas.getY())
@@ -40,5 +41,8 @@ public abstract class VisualElement extends Control {
     public int hashCode() {
         return id.hashCode();
     }
+
+
+
 
 }

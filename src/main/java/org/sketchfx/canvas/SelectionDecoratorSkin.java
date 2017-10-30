@@ -27,7 +27,6 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
         // add ability to drag it around, which moves the owner element too
         NodeDragSupport.configure(selectionArea, (node, deltas) -> {
                 SelectionDecorator d = getSkinnable();
-//                System.out.println("deltas = [" + deltas + "]");
                 d.relocate(d.getLayoutX() + deltas.getX(), d.getLayoutY() + deltas.getY());
             }
         );

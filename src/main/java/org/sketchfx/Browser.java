@@ -2,6 +2,7 @@ package org.sketchfx;
 
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.shape.Rectangle;
 import org.sketchfx.canvas.BrowserCanvas;
@@ -10,6 +11,7 @@ import org.sketchfx.element.ElementFactory;
 import org.sketchfx.element.VisualElement;
 
 import java.util.function.Function;
+
 
 public class Browser extends BorderPane {
 
@@ -30,6 +32,7 @@ public class Browser extends BorderPane {
         setTop(toolbar);
         setCenter(canvas);
         setPrefSize(1000, 650);
+
     }
 
     private MenuItem buildMenuItem( String title, Function<Rectangle, ? extends VisualElement> createElement ) {

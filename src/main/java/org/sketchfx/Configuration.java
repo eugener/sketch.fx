@@ -11,8 +11,9 @@ public class Configuration {
     private final Path path;
     private final Properties props = new Properties();
 
-    public Configuration( String configPrefix ) {
+    public Configuration( String configPrefix, boolean autoload ) {
         this.path = Paths.get(System.getProperty("user.home"), ".sketchfx", configPrefix + ".properties");
+        if ( autoload ) load();
     }
 
     public boolean load() {

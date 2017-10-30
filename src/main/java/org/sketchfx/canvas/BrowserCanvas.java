@@ -1,22 +1,22 @@
 package org.sketchfx.canvas;
 
+import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import org.sketchfx.element.VisualElement;
-import org.sketchfx.util.SingleUseLasso;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 public class BrowserCanvas extends StackPane {
 
-    private Pane elementLayer = new Pane();
-    private Pane controlLayer = new Pane();
+    Pane elementLayer = new Pane();
+    CanvasControlLayer controlLayer = new CanvasControlLayer();
 
-    private SelectionModel<VisualElement> selectionModel = new SelectionModel<>( this::elementRemoved, this::elementAdded );
+    private SelectionModel<VisualElement> selectionModel = new SelectionModel<>();
 
     public BrowserCanvas() {
 
@@ -25,12 +25,11 @@ public class BrowserCanvas extends StackPane {
 
         getChildren().addAll(elementLayer, controlLayer);
 
-        // setting mouse transparent does not work as all children will not respond to events
-        controlLayer.setPickOnBounds(false);
+        selectionModel.getAdditions().subscribe(controlLayer::addSelectorBy);
+        selectionModel.getRemovals().subscribe(controlLayer::removeSelectorBy);
 
-        elementLayer.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
-           selectionModel.clear();
-        });
+        JavaFxObservable.eventsOf(elementLayer, MouseEvent.MOUSE_PRESSED).subscribe( e -> selectionModel.clear() );
+
 
     }
 
@@ -39,43 +38,53 @@ public class BrowserCanvas extends StackPane {
     }
 
 
-    private SingleUseLasso creationLasso = new SingleUseLasso( elementLayer, controlLayer );
+    private Lasso creationLasso = new Lasso( this, true );
 
     public void initAdd( Function<Rectangle, ? extends VisualElement> element ) {
 
-          creationLasso.setOnFinished(rect -> {
-                VisualElement e = element.apply(rect);
-                e.addEventFilter(MouseEvent.MOUSE_PRESSED, ex -> selectionModel.add(e, !ex.isShiftDown()));
-                add(e);
-          });
-          creationLasso.start();
+        creationLasso.getFinsihedEvents()
+                     .firstElement()
+                     .subscribe( rect ->  {
+                            VisualElement e = element.apply(rect);
+                            e.addEventFilter(MouseEvent.MOUSE_PRESSED, ex -> selectionModel.add(e, !ex.isShiftDown()));
+                            add(e);
+                      });
+
+        creationLasso.start();
 
     }
 
+}
+
+class CanvasControlLayer extends Pane {
+
+    CanvasControlLayer() {
+        // setting mouse transparent does not work as all the children will not respond to events
+        this.setPickOnBounds(false);
+    }
 
 
-    private void elementRemoved( VisualElement e ) {
+    void removeSelectorBy( VisualElement e ) {
         findSelectionDecorator(e).ifPresent( decorator -> {
             decorator.unbind();
-            controlLayer.getChildren().remove(decorator);
+            getChildren().remove(decorator);
         });
     }
 
-    private void elementAdded( VisualElement e ) {
+    void addSelectorBy( VisualElement e ) {
         if ( !findSelectionDecorator(e).isPresent()) {
-            controlLayer.getChildren().setAll(new SelectionDecorator(e));
+            getChildren().add(new SelectionDecorator(e));
         }
     }
 
-    private Optional<SelectionDecorator> findSelectionDecorator(VisualElement element ) {
-        for ( Node node: controlLayer.getChildren()) {
+    private Optional<SelectionDecorator> findSelectionDecorator(VisualElement element) {
+        for ( Node node: getChildren()) {
             if ( node instanceof SelectionDecorator && ((SelectionDecorator)node).getOwner() == element) {
                 return Optional.of((SelectionDecorator) node);
             }
         }
         return Optional.empty();
     }
-
 
 }
 

@@ -1,8 +1,11 @@
 package org.sketchfx.canvas;
 
+import io.reactivex.Observable;
+import io.reactivex.rxjavafx.observables.JavaFxObservable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import org.sketchfx.util.RxEventBus;
 
 import java.util.function.Consumer;
 
@@ -10,20 +13,15 @@ class SelectionModel<T> {
 
     private ObservableSet<T> selection = FXCollections.observableSet();
 
-    SelectionModel(Consumer<T> itemRemoved, Consumer<T> itemAdded ) {
+    private Observable<T> additions = JavaFxObservable.additionsOf(selection);
+    private Observable<T> removals = JavaFxObservable.removalsOf(selection);
 
-        selection.addListener( (SetChangeListener.Change<? extends T> change) -> {
+    public Observable<T> getAdditions() {
+        return additions;
+    }
 
-            if ( change.wasRemoved() ) {
-                itemRemoved.accept(change.getElementRemoved());
-
-            }
-            if ( change.wasAdded() ) {
-                itemAdded.accept(change.getElementAdded());
-            }
-
-        });
-
+    public Observable<T> getRemovals() {
+        return removals;
     }
 
     public void clear() {

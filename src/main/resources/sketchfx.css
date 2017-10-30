@@ -2,6 +2,22 @@
    -fx-background-color: white;
 }
 
+.canvas-selection {
+    -fx-fill: transparent;
+    -fx-stroke: deepskyblue;
+    -fx-stroke-dash-array: 3 3 3 3;
+}
+
+.canvas-hint {
+    -fx-background-color: darkgray;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+    -fx-padding: 4 5 4 5;
+    -fx-arc-height: 35;
+    -fx-arc-width: 35;
+    -fx-effect: dropshadow(three-pass-box, #999999, 2, 0, 0, 1);
+}
+
 .shape-element {
     -fx-fill: lightgrey;
     -fx-stroke: black;
@@ -27,16 +43,6 @@
     -fx-effect: dropshadow(three-pass-box, #999999, 2, 0, 0, 1);
 }
 
-.shape-selection-handle:hover {
+shape-selection-handle:hover {
     -fx-fill: lightblue;
-}
-
-.canvas-hint {
-    -fx-background-color: darkgray;
-    -fx-text-fill: white;
-    -fx-border-width: 0;
-    -fx-padding: 5;
-    -fx-arc-height: 15;
-    -fx-arc-width: 15;
-    -fx-effect: dropshadow(three-pass-box, #999999, 2, 0, 0, 1);
 }

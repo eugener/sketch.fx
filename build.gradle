@@ -10,6 +10,9 @@ mainClassName = 'org.sketchfx.SketchFXApp'
 
 dependencies {
 
+    compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
+    compile 'io.reactivex.rxjava2:rxjavafx:2.1.0'
+
     compile 'org.slf4j:slf4j-log4j12:1.7.25'
     compile 'de.jensd:fontawesomefx-commons:8.15'
 

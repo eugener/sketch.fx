@@ -12,10 +12,10 @@ public class SelectionDecorator extends Control {
 
     SelectionDecorator( VisualElement owner ) {
         this.owner = Objects.requireNonNull(owner);
-        bindToOwner();
+        bind();
     }
 
-    private void bindToOwner() {
+    private void bind() {
 
         // first make sure selection has the same location and size
         setLayoutX(owner.getLayoutX());
