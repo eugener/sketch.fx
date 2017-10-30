@@ -18,8 +18,7 @@ import java.util.function.BiConsumer;
 
 public class NodeDragSupport<T extends Node> {
 
-    private Point2D sceneDragStart;
-    private Label sizeHint;
+    Point2D sceneDragStart;
 
     private final Observable<Point2D> dragStartEvents;
     private final Observable<Point2D> dragEvents;
@@ -36,8 +35,6 @@ public class NodeDragSupport<T extends Node> {
     public NodeDragSupport(T node) {
 
         Objects.requireNonNull(node);
-
-        sizeHint = new Label();
 
         dragStartEvents = JavaFxObservable
                         .eventsOf( node, MouseEvent.MOUSE_PRESSED)

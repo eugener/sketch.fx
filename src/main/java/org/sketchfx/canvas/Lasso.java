@@ -11,6 +11,9 @@ import org.sketchfx.util.NodeDragSupport;
 
 public class Lasso extends NodeDragSupport<Node> {
 
+    private static int HINT_OFFSET = 5;
+
+    private Point2D start;
     private Rectangle rect;
     private Label sizeHint;
 
@@ -29,7 +32,7 @@ public class Lasso extends NodeDragSupport<Node> {
         sizeHint.getStyleClass().add("canvas-hint");
 
         getDragStartEvents().map(lassoPane::sceneToLocal).subscribe( p -> {
-
+            start = p;
             rect.setX(p.getX());
             rect.setY(p.getY());
             rect.setWidth(0);
@@ -40,15 +43,21 @@ public class Lasso extends NodeDragSupport<Node> {
 
 
         getDragEvents().map(lassoPane::sceneToLocal).subscribe( p -> {
-            sizeHint.setLayoutX( p.getX() + 10 );
-            sizeHint.setLayoutY( p.getY() + 10 );
+
+            sizeHint.setLayoutX( p.getX() + HINT_OFFSET );
+            sizeHint.setLayoutY( p.getY() + HINT_OFFSET );
             sizeHint.setText( rect.getWidth() + " x " + rect.getHeight() );
+
+            rect.setX( Math.min( start.getX(), p.getX() ));
+            rect.setY( Math.min( start.getY(), p.getY() ));
+
+            Point2D deltas = p.subtract(start);
+
+            rect.setWidth( Math.abs(deltas.getX()));
+            rect.setHeight( Math.abs(deltas.getY()));
+
         });
 
-        getDragDeltaEvents().subscribe(deltas -> {
-            rect.setWidth(rect.getWidth() + deltas.getX() );
-            rect.setHeight(rect.getHeight() + deltas.getY() );
-        });
 
         finsihedEvents = getDragEndEvents().map( e -> {
             lassoPane.getChildren().removeAll(rect, sizeHint);
