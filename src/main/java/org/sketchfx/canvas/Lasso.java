@@ -28,10 +28,6 @@ public class Lasso extends NodeDragSupport<Node> {
         sizeHint = new Label();
         sizeHint.getStyleClass().add("canvas-hint");
 
-        getSuspendedEvents().subscribe( suspended ->
-            canvas.setCursor( suspended.getNewVal()? Cursor.DEFAULT: Cursor.CROSSHAIR)
-        );
-
         getDragStartEvents().map(lassoPane::sceneToLocal).subscribe( p -> {
 
             rect.setX(p.getX());
@@ -57,10 +53,12 @@ public class Lasso extends NodeDragSupport<Node> {
         finsihedEvents = getDragEndEvents().map( e -> {
             lassoPane.getChildren().removeAll(rect, sizeHint);
             return rect;
-        });
+        }).share();
 
         if ( singleUse ) {
             getFinsihedEvents().subscribe(r -> suspend());
+        } else {
+            getFinsihedEvents().subscribe();
         }
 
     }

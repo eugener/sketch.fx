@@ -1,6 +1,7 @@
 package org.sketchfx.canvas;
 
 import io.reactivex.rxjavafx.observables.JavaFxObservable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -16,6 +17,10 @@ public class BrowserCanvas extends StackPane {
     Pane elementLayer = new Pane();
     CanvasControlLayer controlLayer = new CanvasControlLayer();
 
+    private Lasso creationLasso = buildCreationLasso();
+    private Lasso selectionLasso = buildSelectionLasso();
+
+
     private SelectionModel<VisualElement> selectionModel = new SelectionModel<>();
 
     public BrowserCanvas() {
@@ -30,15 +35,33 @@ public class BrowserCanvas extends StackPane {
 
         JavaFxObservable.eventsOf(elementLayer, MouseEvent.MOUSE_PRESSED).subscribe( e -> selectionModel.clear() );
 
-
     }
 
     public void add( VisualElement element ) {
         elementLayer.getChildren().add((Node)element);
     }
 
+    private Lasso buildCreationLasso() {
+        Lasso lasso = new Lasso( this, true );
+        lasso.getSuspendedEvents().subscribe( suspended ->
+            setCursor( suspended.getNewVal()? Cursor.DEFAULT: Cursor.CROSSHAIR)
+        );
+        lasso.getSuspendedEvents().subscribe( c -> selectionLasso.setSuspended(!c.getNewVal()));
+        return lasso;
+    }
 
-    private Lasso creationLasso = new Lasso( this, true );
+    private Lasso buildSelectionLasso() {
+        Lasso lasso = new Lasso( this, false );
+        lasso.getFinsihedEvents().subscribe( rect -> {
+            elementLayer.getChildren().stream().filter( n ->
+                    n instanceof VisualElement &&
+                            n.intersects( rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight())
+            ).forEach( n-> selectionModel.add((VisualElement)n) );
+        });
+        lasso.activate();
+        return lasso;
+    }
+
 
     public void initAdd( Function<Rectangle, ? extends VisualElement> element ) {
 
@@ -50,7 +73,8 @@ public class BrowserCanvas extends StackPane {
                             add(e);
                       });
 
-        creationLasso.start();
+
+        creationLasso.activate();
 
     }
 

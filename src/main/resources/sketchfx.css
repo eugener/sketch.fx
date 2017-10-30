@@ -1,3 +1,7 @@
+.root {
+    -fx-font-size: .9em;
+}
+
 .browser-canvas {
    -fx-background-color: white;
 }

@@ -30,7 +30,7 @@ public class NodeDragSupport<T extends Node> {
     public static <T extends Node> void configure(T node, BiConsumer<T, Point2D> drag ) {
         NodeDragSupport<T> ns = new NodeDragSupport<T>(node);
         ns.getDragDeltaEvents().subscribe(deltas -> drag.accept( node, deltas) );
-        ns.start();
+        ns.activate();
     }
 
     public NodeDragSupport(T node) {
@@ -112,7 +112,7 @@ public class NodeDragSupport<T extends Node> {
         setSuspended(true);
     }
 
-    public void start() {
+    public void activate() {
         setSuspended(false);
     }
 
