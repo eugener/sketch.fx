@@ -7,24 +7,22 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-
-
 public class NodeDragSupport<T extends Node> {
 
-    Point2D sceneDragStart;
+    private Point2D sceneDragStart;
 
     private final Observable<Point2D> dragStartEvents;
     private final Observable<Point2D> dragEvents;
     private final Observable<Point2D> dragDeltaEvents;
     private final Observable<Point2D> dragEndEvents;
-    private final Observable<Change<Boolean>> suspendedEvents;
+
+    private final Observable<Change<Boolean>> suspentionEvents;
 
     public static <T extends Node> void configure(T node, BiConsumer<T, Point2D> drag ) {
         NodeDragSupport<T> ns = new NodeDragSupport<T>(node);
@@ -56,7 +54,7 @@ public class NodeDragSupport<T extends Node> {
                 .map(this::toPoint)
                 .share();
 
-        suspendedEvents = JavaFxObservable.changesOf( suspendedProperty());
+        suspentionEvents = JavaFxObservable.changesOf( suspendedProperty());
 
         // default event functionality
         dragStartEvents.subscribe( p -> sceneDragStart = p);
@@ -73,8 +71,8 @@ public class NodeDragSupport<T extends Node> {
         return new Point2D( e.getSceneX(), e.getSceneY());
     }
 
-    public Observable<Change<Boolean>> getSuspendedEvents() {
-        return suspendedEvents;
+    public Observable<Change<Boolean>> getSuspentionEvents() {
+        return suspentionEvents;
     }
 
     public Observable<Point2D> getDragStartEvents() {

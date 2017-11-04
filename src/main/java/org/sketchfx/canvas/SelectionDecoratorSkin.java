@@ -51,62 +51,59 @@ public class SelectionDecoratorSkin extends SkinBase<SelectionDecorator> {
     private List<Handle> getHandles() {
         return Arrays
                 .stream(HandleType.values())
-                .map(ht -> new Handle(ht, this) )
+                .map(Handle::new)
                 .collect(Collectors.toList());
     }
 
+    private static double HANDLE_SIZE = 7;
+    private static double HANDLE_HALF_SIZE = HANDLE_SIZE / 2;
 
-}
+    class Handle extends Rectangle {
 
-class Handle extends Rectangle {
+        private HandleType handleType;
 
-    private static double SIZE = 7;
-    private static double HALF_SIZE = SIZE / 2;
+        Handle( HandleType handleType ) {
 
-    private HandleType handleType;
-    private Rectangle selectionArea;
+            this.handleType = handleType;
 
-    Handle( HandleType handleType, SelectionDecoratorSkin skin ) {
+            getStyleClass().add("shape-selection-handle");
+            setWidth(HANDLE_SIZE);
+            setHeight(HANDLE_SIZE);
 
-        this.handleType = handleType;
-        this.selectionArea = skin.selectionArea;
+            configurePosition();
+            setCursor(handleType.getCursor());
+            NodeDragSupport.configure( this, (node, deltas) ->
+                    node.handleType.resizeRelocate( getSkinnable(), deltas)
+            );
 
-        getStyleClass().add("shape-selection-handle");
-        setWidth(SIZE);
-        setHeight(SIZE);
-
-        configurePosition();
-        setCursor(handleType.getCursor());
-        NodeDragSupport.configure( this, (node, deltas) ->
-            node.handleType.resizeRelocate( skin.getSkinnable(), deltas)
-        );
-
-    }
-
-    void configurePosition() {
-        setLayoutX( getRelativeX() );
-        setLayoutY( getRelativeY() );
-    }
-
-    private double getRelativeX() {
-
-        double x = selectionArea.getLayoutX() - Handle.HALF_SIZE ;
-        switch ( handleType.getHpos() ) {
-            case LEFT  : return x;
-            case CENTER: return x + selectionArea.getWidth()/2;
-            case RIGHT : return x + selectionArea.getWidth();
-            default    : return x;
         }
-    }
 
-    private double getRelativeY() {
-        double y = selectionArea.getLayoutY() - Handle.HALF_SIZE ;
-        switch (handleType.getVpos()) {
-            case TOP   : return y;
-            case CENTER: return y + selectionArea.getHeight()/2;
-            case BOTTOM: return y + selectionArea.getHeight();
-            default    : return y;
+        void configurePosition() {
+            setLayoutX( getRelativeX() );
+            setLayoutY( getRelativeY() );
         }
+
+        private double getRelativeX() {
+
+            double x = selectionArea.getLayoutX() - HANDLE_HALF_SIZE ;
+            switch ( handleType.getHpos() ) {
+                case LEFT  : return x;
+                case CENTER: return x + selectionArea.getWidth()/2;
+                case RIGHT : return x + selectionArea.getWidth();
+                default    : return x;
+            }
+        }
+
+        private double getRelativeY() {
+            double y = selectionArea.getLayoutY() - HANDLE_HALF_SIZE ;
+            switch (handleType.getVpos()) {
+                case TOP   : return y;
+                case CENTER: return y + selectionArea.getHeight()/2;
+                case BOTTOM: return y + selectionArea.getHeight();
+                default    : return y;
+            }
+        }
+
     }
 
 }

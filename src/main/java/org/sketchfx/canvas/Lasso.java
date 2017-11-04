@@ -2,12 +2,13 @@ package org.sketchfx.canvas;
 
 import io.reactivex.Observable;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import org.sketchfx.util.NodeDragSupport;
+
+import static java.lang.Math.*;
 
 public class Lasso extends NodeDragSupport<Node> {
 
@@ -48,13 +49,13 @@ public class Lasso extends NodeDragSupport<Node> {
             sizeHint.setLayoutY( p.getY() + HINT_OFFSET );
             sizeHint.setText( rect.getWidth() + " x " + rect.getHeight() );
 
-            rect.setX( Math.min( start.getX(), p.getX() ));
-            rect.setY( Math.min( start.getY(), p.getY() ));
+            rect.setX( min( start.getX(), p.getX() ));
+            rect.setY( min( start.getY(), p.getY() ));
 
             Point2D deltas = p.subtract(start);
 
-            rect.setWidth( Math.abs(deltas.getX()));
-            rect.setHeight( Math.abs(deltas.getY()));
+            rect.setWidth( abs(deltas.getX()));
+            rect.setHeight( abs(deltas.getY()));
 
         });
 

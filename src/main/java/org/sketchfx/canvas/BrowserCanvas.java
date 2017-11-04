@@ -26,7 +26,7 @@ public class BrowserCanvas extends StackPane {
     public BrowserCanvas() {
 
         getStylesheets().add(BrowserCanvas.class.getResource("/sketchfx.css").toExternalForm());
-        getStyleClass().add("browser-canvas");
+        elementLayer.getStyleClass().add("browser-canvas");
 
         getChildren().addAll(elementLayer, controlLayer);
 
@@ -43,10 +43,10 @@ public class BrowserCanvas extends StackPane {
 
     private Lasso buildCreationLasso() {
         Lasso lasso = new Lasso( this, true );
-        lasso.getSuspendedEvents().subscribe( suspended ->
+        lasso.getSuspentionEvents().subscribe(suspended ->
             setCursor( suspended.getNewVal()? Cursor.DEFAULT: Cursor.CROSSHAIR)
         );
-        lasso.getSuspendedEvents().subscribe( c -> selectionLasso.setSuspended(!c.getNewVal()));
+        lasso.getSuspentionEvents().subscribe(c -> selectionLasso.setSuspended(!c.getNewVal()));
         return lasso;
     }
 

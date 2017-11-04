@@ -30,7 +30,16 @@ public class Browser extends BorderPane {
         toolbar.getItems().add(btnInsertMenu);
 
         setTop(toolbar);
-        setCenter(canvas);
+
+        ScrollPane scrollPane = new ScrollPane(canvas);
+//        scrollPane.setPannable(true);
+        scrollPane.setFocusTraversable(false);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+
+
+
+        setCenter(scrollPane);
         setPrefSize(1000, 650);
 
     }
