@@ -18,13 +18,11 @@ public class Lasso extends NodeDragSupport<Node> {
     private Rectangle rect;
     private Label sizeHint;
 
-    private final Pane lassoPane;
     private final Observable<Rectangle> finsihedEvents;
 
     public Lasso(BrowserCanvas canvas, boolean singleUse) {
 
         super(canvas);
-        lassoPane = canvas.controlLayer;
 
         rect = new Rectangle( 0, 0, 0, 0);
         rect.getStyleClass().add("canvas-selection");
@@ -32,18 +30,18 @@ public class Lasso extends NodeDragSupport<Node> {
         sizeHint = new Label();
         sizeHint.getStyleClass().add("canvas-hint");
 
-        getDragStartEvents().map(lassoPane::sceneToLocal).subscribe( p -> {
+        getDragStartEvents().map(canvas.controlLayer::sceneToLocal).subscribe( p -> {
             start = p;
             rect.setX(p.getX());
             rect.setY(p.getY());
             rect.setWidth(0);
             rect.setHeight(0);
 
-            lassoPane.getChildren().addAll(rect, sizeHint);
+            canvas.controlLayer.getChildren().addAll(rect, sizeHint);
         });
 
 
-        getDragEvents().map(lassoPane::sceneToLocal).subscribe( p -> {
+        getDragEvents().map(canvas.controlLayer::sceneToLocal).subscribe( p -> {
 
             sizeHint.setLayoutX( p.getX() + HINT_OFFSET );
             sizeHint.setLayoutY( p.getY() + HINT_OFFSET );
@@ -61,7 +59,7 @@ public class Lasso extends NodeDragSupport<Node> {
 
 
         finsihedEvents = getDragEndEvents().map( e -> {
-            lassoPane.getChildren().removeAll(rect, sizeHint);
+            canvas.controlLayer.getChildren().removeAll(rect, sizeHint);
             return rect;
         }).share();
 

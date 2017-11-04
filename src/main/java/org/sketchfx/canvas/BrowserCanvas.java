@@ -11,6 +11,7 @@ import org.sketchfx.element.VisualElement;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class BrowserCanvas extends StackPane {
 
@@ -41,6 +42,13 @@ public class BrowserCanvas extends StackPane {
         elementLayer.getChildren().add((Node)element);
     }
 
+    protected Stream<VisualElement> getVisualElements() {
+        return elementLayer.getChildren()
+                           .stream()
+                           .filter( n -> n instanceof VisualElement )
+                           .map( e -> (VisualElement)e);
+    }
+
     private Lasso buildCreationLasso() {
         Lasso lasso = new Lasso( this, true );
         lasso.getSuspentionEvents().subscribe(suspended ->
@@ -53,10 +61,9 @@ public class BrowserCanvas extends StackPane {
     private Lasso buildSelectionLasso() {
         Lasso lasso = new Lasso( this, false );
         lasso.getFinsihedEvents().subscribe( rect -> {
-            elementLayer.getChildren().stream().filter( n ->
-                    n instanceof VisualElement &&
-                            n.intersects( rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight())
-            ).forEach( n-> selectionModel.add((VisualElement)n) );
+            getVisualElements()
+                    .filter( e -> intersects( rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()))
+                    .forEach( e-> selectionModel.add(e) );
         });
         lasso.activate();
         return lasso;
